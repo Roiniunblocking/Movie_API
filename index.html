@@ -68,6 +68,12 @@
             width: 250px;  /* Fixed width for posters */
             height: 375px; /* Fixed height for posters */
             cursor: pointer; /* Indicate that the poster is clickable */
+            transition: transform 0.3s, box-shadow 0.3s; /* Add transition for smooth effect */
+        }
+
+        .item:hover {
+            transform: scale(1.05); /* Scale up the poster slightly */
+            box-shadow: 0 4px 20px rgba(255, 64, 129, 0.5); /* Add a shadow effect */
         }
 
         .item img {
@@ -164,12 +170,23 @@
         function displayResults(results) {
             const resultsDiv = document.getElementById('results');
             resultsDiv.innerHTML = '';
+
+            // Define the filtering criteria
+            const MIN_RATING = 6; // Minimum average rating
+            const MIN_YEAR = 2010; // Minimum release year
+
             results.forEach((item) => {
-                if (item.poster_path) {
+                // Check if the movie meets the filtering criteria
+                const releaseDate = new Date(item.release_date);
+                const releaseYear = releaseDate.getFullYear();
+                if (item.poster_path && item.vote_average >= MIN_RATING && releaseYear >= MIN_YEAR) {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'item';
                     itemDiv.innerHTML = `
-                        <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" alt="${item.title}" onerror="this.onerror=null; this.src='https://via.placeholder.com/200';" onclick="playMovie(${item.id})">
+                        <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" 
+                             alt="${item.title}" 
+                             onerror="this.onerror=null; this.src='https://via.placeholder.com/200';" 
+                             onclick="playMovie(${item.id})">
                     `;
                     resultsDiv.appendChild(itemDiv);
                 }
