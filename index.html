@@ -40,8 +40,6 @@
             font-size: 1.2em;
             background-color: rgba(255, 255, 255, 0.1);
             color: #ffffff;
-            text-align: center;
-            transition: border-color 0.3s, background-color 0.3s, box-shadow 0.3s;
         }
 
         input:focus {
@@ -107,7 +105,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 9999;
+            z-index: 9999; /* Ensure iframe is on top with proper stacking */
             display: none;
             align-items: center;
             justify-content: center;
@@ -116,12 +114,26 @@
         }
 
         iframe {
-            width: 90%;
-            height: 90%;
+            width: 100%;
+            height: 100%;
             border: none;
             border-radius: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
             transition: transform 0.3s, opacity 0.3s;
+            z-index: 0; /* Ensure iframe is under back button */
+            position: relative; /* Enable z-index functionality */
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2em;
+            cursor: pointer;
+            z-index: 10000; /* Higher z-index for the back button */
         }
 
         iframe:hover {
@@ -149,7 +161,7 @@
     <div class="results" id="results"></div>
 
     <div class="iframe-container" id="iframe-container">
-        <button class="back-button" onclick="closeFullscreen()" style="position: absolute; top: 20px; left: 20px; background: none; border: none; color: white; font-size: 2em; cursor: pointer;">&#8592;</button>
+        <button class="back-button" onclick="closeFullscreen()">&#8592;</button>
         <iframe id="video-iframe" src="" allowfullscreen></iframe>
     </div>
 
