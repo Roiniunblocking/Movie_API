@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Movie Search</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background: #000000; /* Changed to pure black */
+            font-family: "Arial", sans-serif;
+            background: #000000;
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -16,69 +16,100 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px;
-            overflow: hidden; /* Allow overflow */
+            position: relative;
+            overflow: auto; 
         }
 
-        h1 {
-            margin-bottom: 10px;
-            color: #ff4081;
-            font-size: 2.5em;
-        }
+      h1 {
+    margin: 0; /* Remove the default margin */
+    margin-bottom: 20px;
+    color: #ff4081;
+    font-size: 3em;
+    position: relative; 
+    z-index: 10; 
+}
 
         .search-container {
-            width: 100%;
-            max-width: 600px;
-            margin-bottom: 30px;
-            text-align: center; /* Center the search bar */
-        }
+    width: 100%;
+    max-width: 700px;
+    margin-bottom: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 10; 
+}
 
-        input {
-            padding: 15px;
-            border: 2px solid #ff8c00;
-            border-radius: 30px;
-            width: 100%;
-            font-size: 1.2em;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-        }
+input {
+    padding: 15px;
+    border: 2px solid #ff8c00;
+    border-radius: 30px;
+    width: 100%;
+    font-size: 1.2em;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    text-align: center;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, width 0.3s ease; /* Added width transition */
+}
 
-        input:focus {
-            outline: none;
-            border-color: #ff4081;
-            background-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 10px rgba(255, 64, 129, 0.5);
-        }
+input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+    transition: opacity 0.3s ease; /* Add transition for placeholder */
+}
+
+input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #ff4081; /* Highlight border color */
+    box-shadow: 0 0 15px rgba(255, 64, 129, 0.5), 0 0 10px rgba(0, 0, 0, 0.5); /* Add shadow */
+    transform: scale(1.05); /* Slightly increase size */
+}
+
+input:focus::placeholder {
+    opacity: 0.5; /* Fade the placeholder when focused */
+}
+
+input:hover {
+    border-color: #ff2366;
+}
 
         .results {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 20px;
             gap: 20px;
-            max-height: 60vh; /* Set maximum height for scrollable area */
-            overflow-y: auto; /* Enable vertical scrolling */
+            max-height: 500vh;
+            overflow-y: hidden;
             opacity: 0;
-            animation: fadeIn 0.6s forwards;
-            width: 100%; /* Full width */
+            transition: opacity 0.6s ease-in-out;
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            visibility: hidden;
         }
 
         .item {
-            width: 250px;  /* Fixed width for posters */
-            height: 375px; /* Fixed height for posters */
-            cursor: pointer; /* Indicate that the poster is clickable */
-            transition: transform 0.3s, box-shadow 0.3s; /* Add transition for smooth effect */
+            width: 245px;
+            height: 345px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
         }
 
         .item:hover {
-            transform: scale(1.05); /* Scale up the poster slightly */
-            box-shadow: 0 4px 20px rgba(255, 64, 129, 0.5); /* Add a shadow effect */
+            transform: scale(1.05) rotate(2deg);
         }
 
         .item img {
-            width: 100%; /* Cover full width */
-            height: 100%; /* Cover full height */
-            object-fit: cover; /* Ensure image covers the container */
-            border-radius: 20px; /* Rounded corners */
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .item:hover img {
+            transform: scale(1.05);
         }
 
         .play-button {
@@ -105,7 +136,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 9999; /* Ensure iframe is on top with proper stacking */
+            z-index: 9999;
             display: none;
             align-items: center;
             justify-content: center;
@@ -119,60 +150,85 @@
             border: none;
             border-radius: 20px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
-            transition: transform 0.3s, opacity 0.3s;
-            z-index: 0; /* Ensure iframe is under back button */
-            position: relative; /* Enable z-index functionality */
         }
 
         .back-button {
             position: absolute;
             top: 20px;
-            left: 20px;
+            left: 15px;
             background: none;
             border: none;
-            color: white;
-            font-size: 2em;
+            color: #ff8c00;
+            font-size: 3em;
             cursor: pointer;
-            z-index: 10000; /* Higher z-index for the back button */
+            z-index: 10000;
+            transition: color 0.3s;
         }
 
-        iframe:hover {
-            transform: scale(1.02);
-            opacity: 0.9;
+        .back-button:hover {
+            color: #ff4081;
         }
 
         @media (max-width: 768px) {
             .item {
-                width: 100%; /* Full width on mobile */
+                width: 100%;
             }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+       .bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;  /* Adjust to contain */
+    background-position: center; 
+    background-repeat: no-repeat; 
+    opacity: 0.5;  /* Adjust opacity */
+    display: none; 
+    z-index: 0; 
+    transition: opacity 0.3s ease; 
+}
     </style>
 </head>
 <body>
+    <div class="bg-overlay" id="bg-overlay"></div>
     <h1>Movie Search</h1>
     <div class="search-container">
-        <input type="text" id="search" placeholder="Search for a movie...">
+        <input type="text" id="search" placeholder="Search for a movie..." />
     </div>
     <div class="results" id="results"></div>
 
     <div class="iframe-container" id="iframe-container">
-        <button class="back-button" onclick="closeFullscreen()">&#8592;</button>
+        <button class="back-button" onclick="closeFullscreen()">X</button>
         <iframe id="video-iframe" src="" allowfullscreen></iframe>
     </div>
 
     <script>
-        const apiKey = 'd13abf16ac8e223ca6b73612cc10878d';
+        const apiKey = "d13abf16ac8e223ca6b73612cc10878d";
 
-        document.getElementById('search').addEventListener('input', function () {
+        // Function to fetch trending movies
+        async function fetchTrendingMovies() {
+            const url = `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=en-US`;
+            const response = await fetch(url);
+            const data = await response.json();
+            displayResults(data.results);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchTrendingMovies(); // Fetch trending movies when the page loads
+        });
+
+        document.getElementById("search").addEventListener("input", function () {
             searchMovies(this.value);
         });
 
         async function searchMovies(query) {
+            if (!query) {
+                fetchTrendingMovies();  // If search is empty, show trending movies
+                return;
+            }
+    
             const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&query=${encodeURIComponent(query)}`;
             const response = await fetch(url);
             const data = await response.json();
@@ -180,30 +236,75 @@
         }
 
         function displayResults(results) {
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = '';
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = ""; // Clear previous results
 
-            // Define the filtering criteria
             const MIN_RATING = 6; // Minimum average rating
             const MIN_YEAR = 2010; // Minimum release year
+            let hasResults = false; // Track if there are results
 
             results.forEach((item) => {
-                // Check if the movie meets the filtering criteria
                 const releaseDate = new Date(item.release_date);
                 const releaseYear = releaseDate.getFullYear();
-                if (item.poster_path && item.vote_average >= MIN_RATING && releaseYear >= MIN_YEAR) {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'item';
+                // Check if the item meets the rating and year criteria
+                if (
+                    item.poster_path &&
+                    item.vote_average >= MIN_RATING &&
+                    releaseYear >= MIN_YEAR
+                ) {
+                    hasResults = true; // A valid result is found
+                    const itemDiv = document.createElement("div");
+                    itemDiv.className = "item";
                     itemDiv.innerHTML = `
                         <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" 
                              alt="${item.title}" 
                              onerror="this.onerror=null; this.src='https://via.placeholder.com/200';" 
+                             onmouseenter="setBackground(${item.id})" 
+                             onmouseleave="clearBackground()" 
                              onclick="playMovie(${item.id})">
                     `;
-                    resultsDiv.appendChild(itemDiv);
+                    resultsDiv.appendChild(itemDiv); // Add the movie to the resultsDiv
                 }
             });
-            resultsDiv.style.opacity = 1; // Show results after rendering
+
+            // Show results if there are any
+            if (hasResults) {
+                resultsDiv.style.visibility = "visible"; // Make results visible
+                resultsDiv.style.opacity = 1; // Fade in
+            } else {
+                resultsDiv.style.visibility = "hidden"; // Hide results if none found
+                resultsDiv.style.opacity = 0; // Fade out
+                resultsDiv.innerHTML = "<p>No highly rated movies found.</p>"; // Feedback message
+            }
+        }
+
+        async function setBackground(movieId) {
+            const bgOverlay = document.getElementById("bg-overlay");
+
+            // Fetch movie details to get alternative posters
+            const detailsUrl = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&append_to_response=images`;
+            const detailsResponse = await fetch(detailsUrl);
+            const detailsData = await detailsResponse.json();
+
+            // Prepare alternative posters
+            const alternativePosters = detailsData.images.posters.map(poster => 
+                `https://image.tmdb.org/t/p/original${poster.file_path}`
+            ).filter((_, index) => index < 3); // Use first 3 posters
+
+            // If there are alternative posters, randomly select one
+            if (alternativePosters.length > 0) {
+                const randomIndex = Math.floor(Math.random() * alternativePosters.length);
+                const alternativePoster = alternativePosters[randomIndex];
+
+                // Set the background to the random alternative poster
+                bgOverlay.style.backgroundImage = `url(${alternativePoster})`;
+                bgOverlay.style.display = "block"; // Show the background
+            }
+        }
+
+        function clearBackground() {
+            const bgOverlay = document.getElementById("bg-overlay");
+            bgOverlay.style.display = "none"; // Hide the background
         }
 
         async function fetchDetails(id) {
@@ -213,22 +314,25 @@
         }
 
         function playMovie(id) {
-            const videoUrl = `https://turbovid.eu/api/req/movie/${id}`; // Set your specified server URL directly
+            const videoUrl = `https://turbovid.eu/api/req/movie/${id}`;
             openFullscreenIframe(videoUrl);
         }
 
         function openFullscreenIframe(url) {
-            const iframeContainer = document.getElementById('iframe-container');
-            const videoIframe = document.getElementById('video-iframe');
+            const iframeContainer = document.getElementById("iframe-container");
+            const videoIframe = document.getElementById("video-iframe");
             videoIframe.src = url;
-            iframeContainer.style.display = 'flex';
+            iframeContainer.style.display = "flex";
+            document.body.style.overflow = "hidden"; // Hide the scrollbar
         }
 
         function closeFullscreen() {
-            const iframeContainer = document.getElementById('iframe-container');
-            const videoIframe = document.getElementById('video-iframe');
-            videoIframe.src = '';
-            iframeContainer.style.display = 'none';
+            const iframeContainer = document.getElementById("iframe-container");
+            const videoIframe = document.getElementById("video-iframe");
+            videoIframe.src = "";
+            iframeContainer.style.display = "none";
+            document.body.style.overflow = ""; // Restore the scrollbar
+            clearBackground(); // Clear the background when closing fullscreen
         }
     </script>
 </body>
