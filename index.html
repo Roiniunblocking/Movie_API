@@ -20,56 +20,56 @@
             overflow: auto; 
         }
 
-      h1 {
-    margin: 0; /* Remove the default margin */
-    margin-bottom: 20px;
-    color: #ff4081;
-    font-size: 3em;
-    position: relative; 
-    z-index: 10; 
-}
+        h1 {
+            margin: 0; /* Remove the default margin */
+            margin-bottom: 20px;
+            color: #ff4081;
+            font-size: 3em;
+            position: relative; 
+            z-index: 10; 
+        }
 
         .search-container {
-    width: 100%;
-    max-width: 700px;
-    margin-bottom: 20px;
-    text-align: center;
-    position: relative;
-    z-index: 10; 
-}
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 10; 
+        }
 
-input {
-    padding: 15px;
-    border: 2px solid #ff8c00;
-    border-radius: 30px;
-    width: 100%;
-    font-size: 1.2em;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #ffffff;
-    text-align: center;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, width 0.3s ease; /* Added width transition */
-}
+        input {
+            padding: 15px;
+            border: 2px solid #ff8c00;
+            border-radius: 30px;
+            width: 100%;
+            font-size: 1.2em;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            text-align: center;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, width 0.3s ease; /* Added width transition */
+        }
 
-input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
-    transition: opacity 0.3s ease; /* Add transition for placeholder */
-}
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            transition: opacity 0.3s ease; /* Add transition for placeholder */
+        }
 
-input:focus {
-    outline: none;
-    background-color: rgba(255, 255, 255, 0.2);
-    border-color: #ff4081; /* Highlight border color */
-    box-shadow: 0 0 15px rgba(255, 64, 129, 0.5), 0 0 10px rgba(0, 0, 0, 0.5); /* Add shadow */
-    transform: scale(1.05); /* Slightly increase size */
-}
+        input:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-color: #ff4081; /* Highlight border color */
+            box-shadow: 0 0 15px rgba(255, 64, 129, 0.5), 0 0 10px rgba(0, 0, 0, 0.5); /* Add shadow */
+            transform: scale(1.05); /* Slightly increase size */
+        }
 
-input:focus::placeholder {
-    opacity: 0.5; /* Fade the placeholder when focused */
-}
+        input:focus::placeholder {
+            opacity: 0.5; /* Fade the placeholder when focused */
+        }
 
-input:hover {
-    border-color: #ff2366;
-}
+        input:hover {
+            border-color: #ff2366;
+        }
 
         .results {
             display: flex;
@@ -175,20 +175,20 @@ input:hover {
             }
         }
 
-       .bg-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;  /* Adjust to contain */
-    background-position: center; 
-    background-repeat: no-repeat; 
-    opacity: 0.6;  /* Adjust opacity */
-    display: none; 
-    z-index: 0; 
-    transition: opacity 0.3s ease; 
-}
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;  /* Adjust to contain */
+            background-position: center; 
+            background-repeat: no-repeat; 
+            opacity: 0.6;  /* Adjust opacity */
+            display: none; 
+            z-index: 0; 
+            transition: opacity 0.3s ease; 
+        }
     </style>
 </head>
 <body>
@@ -259,8 +259,6 @@ input:hover {
                         <img src="https://image.tmdb.org/t/p/w500${item.poster_path}" 
                              alt="${item.title}" 
                              onerror="this.onerror=null; this.src='https://via.placeholder.com/200';" 
-                             onmouseenter="setBackground(${item.id})" 
-                             onmouseleave="clearBackground()" 
                              onclick="playMovie(${item.id})">
                     `;
                     resultsDiv.appendChild(itemDiv); // Add the movie to the resultsDiv
@@ -276,35 +274,6 @@ input:hover {
                 resultsDiv.style.opacity = 0; // Fade out
                 resultsDiv.innerHTML = "<p>No highly rated movies found.</p>"; // Feedback message
             }
-        }
-
-        async function setBackground(movieId) {
-            const bgOverlay = document.getElementById("bg-overlay");
-
-            // Fetch movie details to get alternative posters
-            const detailsUrl = `https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&append_to_response=images`;
-            const detailsResponse = await fetch(detailsUrl);
-            const detailsData = await detailsResponse.json();
-
-            // Prepare alternative posters
-            const alternativePosters = detailsData.images.posters.map(poster => 
-                `https://image.tmdb.org/t/p/original${poster.file_path}`
-            ).filter((_, index) => index < 3); // Use first 3 posters
-
-            // If there are alternative posters, randomly select one
-            if (alternativePosters.length > 0) {
-                const randomIndex = Math.floor(Math.random() * alternativePosters.length);
-                const alternativePoster = alternativePosters[randomIndex];
-
-                // Set the background to the random alternative poster
-                bgOverlay.style.backgroundImage = `url(${alternativePoster})`;
-                bgOverlay.style.display = "block"; // Show the background
-            }
-        }
-
-        function clearBackground() {
-            const bgOverlay = document.getElementById("bg-overlay");
-            bgOverlay.style.display = "none"; // Hide the background
         }
 
         async function fetchDetails(id) {
@@ -332,7 +301,6 @@ input:hover {
             videoIframe.src = "";
             iframeContainer.style.display = "none";
             document.body.style.overflow = ""; // Restore the scrollbar
-            clearBackground(); // Clear the background when closing fullscreen
         }
     </script>
 </body>
